@@ -30,6 +30,7 @@ import React, { useState } from "react";
 import request from "@/utils/request/client";
 import { enqueueSnackbar } from "notistack";
 import { PERMISSIONS } from "@/config";
+import { useContextStore } from "@/store/context";
 
 type ListItem = { info: UserInfo; permissions: string[] };
 
@@ -45,6 +46,7 @@ const UserManager: React.FC<Props> = (props) => {
 	const [singleRole, setSingleRole] = useState<ListItem | null>(null);
 	const [loading, setLoading] = useState("");
 	const [tags, setTags] = useState<string[]>([]);
+	const context = useContextStore();
 	return (
 		<>
 			<PageTitle title="用户管理" back />
@@ -132,21 +134,25 @@ const UserManager: React.FC<Props> = (props) => {
 										</div>
 									</TableCell>
 									<TableCell align="right">
-										<IconButton
-											size="small"
-											onClick={() => {
-												setSingleRole(item);
-												setTags(item.permissions);
-											}}
-										>
-											<EditOutlined />
-										</IconButton>
-										<IconButton
-											size="small"
-											onClick={() => setSingleDelete(item)}
-										>
-											<DeleteOutlined />
-										</IconButton>
+										{context.permission?.includes("root") && (
+											<IconButton
+												size="small"
+												onClick={() => {
+													setSingleRole(item);
+													setTags(item.permissions);
+												}}
+											>
+												<EditOutlined />
+											</IconButton>
+										)}
+										{context.user?.uid !== uid && (
+											<IconButton
+												size="small"
+												onClick={() => setSingleDelete(item)}
+											>
+												<DeleteOutlined />
+											</IconButton>
+										)}
 									</TableCell>
 								</TableRow>
 							);

@@ -7,6 +7,7 @@ use crate::{
 };
 use anyhow::Result;
 use sqlx::Row;
+use tracing::error;
 
 pub async fn get_with_task(task_id: u32) -> Result<Vec<Resource>> {
     repository::resource::get_with_task(task_id).await
@@ -127,12 +128,18 @@ pub async fn get_recommend(uid: u32, task_id: u32) -> Result<Vec<Resource>> {
     .into_iter()
     .map(|x| x.value)
     .collect::<Vec<_>>();
+    if tags.is_empty() {
+        return Ok(vec![]);
+    }
     let participated = repository::task::get_participated(uid)
         .await?
         .into_iter()
         .map(|(task, _)| task.id)
         .filter(|x| *x != task_id)
         .collect::<Vec<_>>();
+    if participated.is_empty() {
+        return Ok(vec![]);
+    }
     let sql = format!(
         r#"
         SELECT DISTINCT tb_resource.id as id
@@ -162,6 +169,9 @@ pub async fn get_recommend(uid: u32, task_id: u32) -> Result<Vec<Resource>> {
         .into_iter()
         .map(|x| x.get("id"))
         .collect::<Vec<u32>>();
+    if res.is_empty() {
+        return Ok(vec![]);
+    }
     let sql = format!(
         r#"
         SELECT id, type AS typ, content, name, tid

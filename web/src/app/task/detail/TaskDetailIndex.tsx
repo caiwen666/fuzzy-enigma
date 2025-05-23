@@ -172,15 +172,25 @@ const TaskDetailIndex: React.FC<Props> = (props) => {
 							已完成
 						</Button>
 					) : remainingTime > 0 ? (
-						<Button
-							variant="contained"
-							className="self-center ml-auto"
-							onClick={handleFinish}
-							disabled={loading !== ""}
-							loading={loading === "finish"}
-						>
-							完成
-						</Button>
+						myGroup ? (
+							<Button
+								variant="contained"
+								className="self-center ml-auto"
+								onClick={handleFinish}
+								disabled={loading !== ""}
+								loading={loading === "finish"}
+							>
+								完成
+							</Button>
+						) : (
+							<Button
+								startIcon={<CloseOutlined />}
+								className="self-center ml-auto"
+								disabled={true}
+							>
+								未参加任务
+							</Button>
+						)
 					) : (
 						<Button
 							startIcon={<CloseOutlined />}
@@ -192,11 +202,11 @@ const TaskDetailIndex: React.FC<Props> = (props) => {
 					)}
 				</div>
 			</Paper>
-			{task.info.type === "group" && (
+			{task.info.type === "group" && myGroup && (
 				<Paper className="mt-2 overflow-hidden p-3">
 					<div className="text-lg font-bold text-title">我的小组</div>
 					<Grid container spacing={2} className="mt-3">
-						{myGroup!.members.map((v) => (
+						{myGroup.members.map((v) => (
 							<Grid size={{ xs: 12, sm: 6, md: 4 }} key={v.uid}>
 								<UserItem user={v} />
 							</Grid>
@@ -204,31 +214,38 @@ const TaskDetailIndex: React.FC<Props> = (props) => {
 					</Grid>
 				</Paper>
 			)}
-
-			<Paper className="mt-2 overflow-hidden">
-				<div className="text-lg font-bold text-title pt-3 px-3">任务资源</div>
-				{resources.map((v, index) => (
-					<div key={v.id}>
-						{index !== 0 && <Divider />}
-						<ResourceItem key={v.id} resource={v} />
-					</div>
-				))}
-			</Paper>
-			<Paper className="mt-2 overflow-hidden">
-				<div className="text-lg font-bold text-title pt-3 px-3">推荐资源</div>
-				{recommend === null ? (
-					<CircularProgress className="m-4" />
-				) : recommend.length === 0 ? (
-					<div className="m-4">暂无推荐</div>
-				) : (
-					recommend.map((v, index) => (
-						<div key={v.id}>
-							{index !== 0 && <Divider />}
-							<ResourceItem key={v.id} resource={v} />
+			{resources.length > 0 && (
+				<>
+					<Paper className="mt-2 overflow-hidden">
+						<div className="text-lg font-bold text-title pt-3 px-3">
+							任务资源
 						</div>
-					))
-				)}
-			</Paper>
+						{resources.map((v, index) => (
+							<div key={v.id}>
+								{index !== 0 && <Divider />}
+								<ResourceItem key={v.id} resource={v} />
+							</div>
+						))}
+					</Paper>
+					<Paper className="mt-2 overflow-hidden">
+						<div className="text-lg font-bold text-title pt-3 px-3">
+							推荐资源
+						</div>
+						{recommend === null ? (
+							<CircularProgress className="m-4" />
+						) : recommend.length === 0 ? (
+							<div className="m-4">暂无推荐</div>
+						) : (
+							recommend.map((v, index) => (
+								<div key={v.id}>
+									{index !== 0 && <Divider />}
+									<ResourceItem key={v.id} resource={v} />
+								</div>
+							))
+						)}
+					</Paper>
+				</>
+			)}
 		</>
 	);
 };

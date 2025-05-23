@@ -116,5 +116,6 @@ export const getTimeArrange = async (r: AxiosInstance) => {
 };
 
 export const updateTimeArrange = async (r: AxiosInstance) => {
-	await r.get("/task/update_time_arrange");
+	// ai生成会比较慢，超时时间设置大一点
+	await r.get("/task/update_time_arrange", { timeout: 1000 * 60 * 10 });
 };

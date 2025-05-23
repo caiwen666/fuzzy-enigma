@@ -21,6 +21,7 @@ import {
 import UserItem from "./UserItem";
 import request from "@/utils/request/client";
 import { logout } from "@/api/user";
+import Link from "next/link";
 
 export default function Appbar() {
 	const [isScrolled, setIsScrolled] = useState(false);
@@ -58,9 +59,12 @@ export default function Appbar() {
 				elevation={isScrolled ? 4 : 0}
 				square
 			>
-				<div className="self-center font-bold text-lg ml-4 mr-4 text-title">
+				<Link
+					className="self-center font-bold text-lg ml-4 mr-4 text-title"
+					href="/"
+				>
 					{WEBSITE_NAME}
-				</div>
+				</Link>
 				<IconButton
 					className="ml-auto mr-2 self-center p-2"
 					size="small"

@@ -61,37 +61,41 @@ const TaskManager: React.FC<Props> = (props) => {
 		<div>
 			<PageTitle title="管理任务" back buttons={buttons}></PageTitle>
 			<Paper className="mt-5 overflow-hidden">
-				{taskList.map((item, index) => (
-					<div key={item.id}>
-						{index !== 0 && <Divider />}
-						<div className="p-3 pb-2">
-							<TaskItem task={item} />
-							<div className="mt-2">
-								<Button
-									startIcon={<Edit />}
-									size="small"
-									href={`/task/edit?id=${item.id}`}
-									disabled={loading !== ""}
-								>
-									编辑
-								</Button>
-								<Button
-									startIcon={<Delete />}
-									size="small"
-									className="ml-2"
-									onClick={() => {
-										setDeleteDialog(true);
-										deleteTarget.current = item.id;
-									}}
-									disabled={loading !== ""}
-									loading={loading === "delete" + item.id}
-								>
-									删除
-								</Button>
+				{taskList.length === 0 && (
+					<div className="p-12 text-center text-sm text-gray-500">暂无任务</div>
+				)}
+				{taskList.length !== 0 &&
+					taskList.map((item, index) => (
+						<div key={item.id}>
+							{index !== 0 && <Divider />}
+							<div className="p-3 pb-2">
+								<TaskItem task={item} />
+								<div className="mt-2">
+									<Button
+										startIcon={<Edit />}
+										size="small"
+										href={`/task/edit?id=${item.id}`}
+										disabled={loading !== ""}
+									>
+										编辑
+									</Button>
+									<Button
+										startIcon={<Delete />}
+										size="small"
+										className="ml-2"
+										onClick={() => {
+											setDeleteDialog(true);
+											deleteTarget.current = item.id;
+										}}
+										disabled={loading !== ""}
+										loading={loading === "delete" + item.id}
+									>
+										删除
+									</Button>
+								</div>
 							</div>
 						</div>
-					</div>
-				))}
+					))}
 			</Paper>
 			<Dialog open={deleteDialog} onClose={() => setDeleteDialog(false)}>
 				<DialogTitle>删除任务</DialogTitle>

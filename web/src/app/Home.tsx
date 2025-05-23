@@ -33,6 +33,7 @@ import dayjs from "dayjs";
 import request from "@/utils/request/client";
 import { useEffect, useState } from "react";
 import { enqueueSnackbar } from "notistack";
+import { useContextStore } from "@/store/context";
 
 interface TaskItemOnHomeProps extends DefaultProps {
 	task: Task;
@@ -167,37 +168,50 @@ export const Home: React.FC<Props> = (props) => {
 		} catch {}
 		setLoading("");
 	};
+	const context = useContextStore();
 	useEffect(() => {
-		handleLoadTimeArrange();
-	}, []);
+		if (context.permission?.includes("ai")) {
+			handleLoadTimeArrange();
+		}
+	}, [context]);
 	return (
 		<>
 			<PageTitle title="首页" />
-			<Paper className="mt-5 overflow-hidden p-3">
-				<div className="flex items-center">
-					<div className="font-bold text-title text-lg">AI 时间规划</div>
-					<IconButton
-						className="ml-auto"
-						size="small"
-						disabled={loading !== ""}
-						onClick={handleUpdateTimeArrange}
-					>
-						<RefreshOutlined />
-					</IconButton>
-				</div>
-				{loading === "ai" && <CircularProgress className="m-3" />}
-				<MarkdownPreview
-					value={timeArrange?.content || "暂无数据"}
-					className="mt-2"
-				/>
-				{timeArrange && (
-					<div className="text-title text-xs mt-3">
-						最后生成于：
-						{dayjs(timeArrange.created).format("YYYY-MM-DD HH:mm:ss")}
+			{context.permission?.includes("ai") && (
+				<Paper className="mt-5 overflow-hidden p-3">
+					<div className="flex items-center">
+						<div className="font-bold text-title text-lg">AI 时间规划</div>
+						<IconButton
+							className="ml-auto"
+							size="small"
+							disabled={loading !== ""}
+							onClick={handleUpdateTimeArrange}
+						>
+							<RefreshOutlined />
+						</IconButton>
 					</div>
-				)}
-			</Paper>
-			<Paper className="mt-2 overflow-hidden">
+					{loading === "ai" && <CircularProgress className="m-3" />}
+					{loading === "" && (
+						<MarkdownPreview
+							value={timeArrange?.content || "暂无数据"}
+							className="mt-2"
+						/>
+					)}
+					{timeArrange && (
+						<div className="text-title text-xs mt-3">
+							最后生成于：
+							{dayjs(timeArrange.created).format("YYYY-MM-DD HH:mm:ss")}
+						</div>
+					)}
+				</Paper>
+			)}
+
+			<Paper
+				className={classNames("overflow-hidden", {
+					"mt-2": context.permission?.includes("ai"),
+					"mt-5": !context.permission?.includes("ai"),
+				})}
+			>
 				<Tabs value={tab} onChange={(e, v) => setTab(v)}>
 					<Tab label="未完成" value="uncompleted" />
 					<Tab label="已完成" value="completed" />
