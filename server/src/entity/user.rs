@@ -51,4 +51,8 @@ impl UserPermission {
     pub fn into_vec(self) -> Vec<String> {
         self.permission
     }
+
+    pub fn ai(&self) -> bool {
+        self.permission.contains(&String::from("ai"))
+    }
 }

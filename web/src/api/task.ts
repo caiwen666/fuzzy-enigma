@@ -108,3 +108,13 @@ export const finishTask = async (
 ): Promise<void> => {
 	await r.get("/task/finish", { params: { id: taskId } });
 };
+
+export const getTimeArrange = async (r: AxiosInstance) => {
+	const res: { content: string; created: number } | null =
+		await r.get("/task/time_arrange");
+	return res;
+};
+
+export const updateTimeArrange = async (r: AxiosInstance) => {
+	await r.get("/task/update_time_arrange");
+};

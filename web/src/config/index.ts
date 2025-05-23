@@ -24,4 +24,8 @@ export const PERMISSIONS = [
 		value: "assign_task",
 		label: "可以将任务指派给其他人",
 	},
+	{
+		value: "ai",
+		label: "可以使用AI助手",
+	},
 ];

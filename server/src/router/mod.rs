@@ -42,7 +42,9 @@ pub fn get_routers() -> Router {
                         .push(Router::with_path("delete").get(task::delete_group))
                         .push(Router::with_path("add_user").get(task::add_member))
                         .push(Router::with_path("delete_user").get(task::delete_member)),
-                ),
+                )
+                .push(Router::with_path("time_arrange").get(task::get_time_arrange))
+                .push(Router::with_path("update_time_arrange").get(task::update_time_arrange)),
         )
         .push(
             Router::with_path("resource")

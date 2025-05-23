@@ -44,7 +44,7 @@ pub struct Mail {
 
 #[derive(Deserialize)]
 pub struct App {
-    pub default_permissions: String,
+    pub deepseek_token: String,
     pub allow_domain: Vec<String>,
 }
 

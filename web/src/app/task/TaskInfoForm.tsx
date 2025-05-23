@@ -69,11 +69,12 @@ const TaskForm: React.FC<Props> = (props) => {
 		const valid = await trigger();
 		if (!valid) return;
 		const { title, priority, type, deadline, cost, description } = getValues();
+		const _deadline = deadline instanceof Date ? deadline : deadline.$d;
 		const info: TaskInfo = {
 			title,
 			priority,
 			type,
-			deadline: deadline.getTime(),
+			deadline: _deadline.getTime(),
 			cost: Number(cost),
 		};
 		setLoading("primary");

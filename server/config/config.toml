@@ -1,0 +1,24 @@
+[server]
+host = "0.0.0.0"
+port = 15565
+
+[log]
+filter_level = "debug"
+with_ansi = true
+to_stdout = true
+directory = "./logs"
+file_prefix = "docdb"
+rolling = "daily"
+
+[database]
+url = "mysql://root:z2970046657@localhost:3306/fe"
+
+[mail]
+host = "smtp.qiye.aliyun.com"
+port = 25
+username = "fe@gcteamo.com"
+password = "ABCabc123..."
+
+[app]
+allow_domain = ["http://localhost:3000", "http://127.0.0.1:3000"]
+deepseek_token = "sk-d84c178c8c994b1aac5d27c9307601e9"

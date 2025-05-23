@@ -1,5 +1,7 @@
 "use client";
 
+import { getTimeArrange, updateTimeArrange } from "@/api/task";
+import MarkdownPreview from "@/components/MarkdownPreview";
 import PageTitle from "@/components/PageTitle";
 import TaskItem from "@/components/TaskItem";
 import { Task } from "@/entity/task";
@@ -11,6 +13,7 @@ import {
 	WarningAmberOutlined,
 	DirectionsBikeOutlined,
 	HotelOutlined,
+	RefreshOutlined,
 } from "@mui/icons-material";
 import {
 	Paper,
@@ -22,9 +25,14 @@ import {
 	ListItemIcon,
 	ListItemText,
 	ListSubheader,
+	IconButton,
+	CircularProgress,
 } from "@mui/material";
 import classNames from "classnames";
-import { useState } from "react";
+import dayjs from "dayjs";
+import request from "@/utils/request/client";
+import { useEffect, useState } from "react";
+import { enqueueSnackbar } from "notistack";
 
 interface TaskItemOnHomeProps extends DefaultProps {
 	task: Task;
@@ -134,10 +142,62 @@ export const Home: React.FC<Props> = (props) => {
 		}
 	});
 	const [taskCategory, setTaskCategory] = useState("all");
+	const [loading, setLoading] = useState("");
+	const [timeArrange, setTimeArrange] = useState<{
+		content: string;
+		created: number;
+	} | null>(null);
+	const handleLoadTimeArrange = async () => {
+		setLoading("ai");
+		try {
+			const res = await getTimeArrange(request);
+			setTimeArrange(res);
+		} catch {}
+		setLoading("");
+	};
+	const handleUpdateTimeArrange = async () => {
+		setLoading("ai");
+		try {
+			await updateTimeArrange(request);
+			await handleLoadTimeArrange();
+			enqueueSnackbar("更新成功", {
+				variant: "success",
+				autoHideDuration: 3000,
+			});
+		} catch {}
+		setLoading("");
+	};
+	useEffect(() => {
+		handleLoadTimeArrange();
+	}, []);
 	return (
 		<>
 			<PageTitle title="首页" />
-			<Paper className="mt-5 overflow-hidden">
+			<Paper className="mt-5 overflow-hidden p-3">
+				<div className="flex items-center">
+					<div className="font-bold text-title text-lg">AI 时间规划</div>
+					<IconButton
+						className="ml-auto"
+						size="small"
+						disabled={loading !== ""}
+						onClick={handleUpdateTimeArrange}
+					>
+						<RefreshOutlined />
+					</IconButton>
+				</div>
+				{loading === "ai" && <CircularProgress className="m-3" />}
+				<MarkdownPreview
+					value={timeArrange?.content || "暂无数据"}
+					className="mt-2"
+				/>
+				{timeArrange && (
+					<div className="text-title text-xs mt-3">
+						最后生成于：
+						{dayjs(timeArrange.created).format("YYYY-MM-DD HH:mm:ss")}
+					</div>
+				)}
+			</Paper>
+			<Paper className="mt-2 overflow-hidden">
 				<Tabs value={tab} onChange={(e, v) => setTab(v)}>
 					<Tab label="未完成" value="uncompleted" />
 					<Tab label="已完成" value="completed" />

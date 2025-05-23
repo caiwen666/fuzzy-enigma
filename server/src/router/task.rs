@@ -335,3 +335,30 @@ pub async fn finish_task(req: &mut Request, depot: &mut Depot) -> RouterResult {
     service::task::finish(id, uid).await?;
     Ok(().into())
 }
+
+#[handler]
+pub async fn get_time_arrange(depot: &mut Depot) -> RouterResult {
+    let context = depot.obtain::<AppContext>().unwrap();
+    if !context.permissions.ai() {
+        return Err(AppError::PermissionDenied.into());
+    }
+    let res = service::ai::get_time_arrange(context.user.uid)
+        .await?
+        .map(|(content, created)| {
+            json!({
+                "content": content,
+                "created": created,
+            })
+        });
+    Ok(res.into())
+}
+
+#[handler]
+pub async fn update_time_arrange(depot: &mut Depot) -> RouterResult {
+    let context = depot.obtain::<AppContext>().unwrap();
+    if !context.permissions.ai() {
+        return Err(AppError::PermissionDenied.into());
+    }
+    service::ai::update_time_arrange(context.user.uid).await?;
+    Ok(().into())
+}
